@@ -1,6 +1,5 @@
 package com.pinkstack.tocenlive
 
-import cats.effect._
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.scalatest._
 import org.scalatest.flatspec._
