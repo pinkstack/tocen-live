@@ -1,0 +1,10 @@
+
+# GET https://api.ontime.si/api/v1/lpp/buses/?lat_min=46.055872124812595&lat_max=46.060478505685595&lng_min=14.517474252855328&lng_max=14.523884788513836
+GET https://api.ontime.si/api/v1/lpp/buses
+# accept: application/json
+authorization: Api-Key {{tocen_key}}
+# Origin: https://tocen.si
+
+
+###
+

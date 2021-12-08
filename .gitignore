@@ -1,0 +1,40 @@
+# App stuff
+.envrc
+requests/http-client.private.env.json
+
+# Metals
+.metals/
+
+# Mac stuff
+.DS_Store
+**/.DS_Store
+
+# Environment variables
+.envrc
+
+# NodeJS stuff
+node_modules/
+
+# Scala sStuff
+# gitignore file for build related files, not for developer's tools files, see: https://git-scm.com/docs/gitignore
+target/
+project/target
+*.class
+*.log
+
+.idea/
+.bsp/
+
+voice-*.json
+requests/http-client.private.env.json
+
+*.mp3
+
+
+backend/target/
+backend/project/target
+backend/*.mp3
+
+
+tmp/
+!tmp/.keep
