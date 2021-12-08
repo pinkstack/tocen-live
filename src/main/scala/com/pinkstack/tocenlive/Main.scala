@@ -21,8 +21,9 @@ object Main extends IOApp.Simple {
       Slf4jLogger.getLoggerFromName[F]("tocen-live")
 
     for {
-      buses <- mkResources[IO]().use(OnTimeClient[IO]().buses)
-      _ <- log[IO].info(s"Collected ${buses.size} buses")
-    } yield ExitCode.Success
+      ref <- Ref[IO].of(0)
+      _ <- mkResources[IO]().map(OnTimeWatcher[IO](ref)).use(_.watch())
+      _ <- Logger[IO].info("Done")
+    } yield ()
   }
 }

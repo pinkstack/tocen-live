@@ -18,8 +18,8 @@ class OnTimeClientSpec extends AsyncSpec {
   private def mkBackend(): SttpBackendStub[IO, Any] =
     AsyncHttpClientCatsBackend.stub[IO]
 
-  private def environmentWithResponse[T](body: T, statusCode: StatusCode = StatusCode.Ok):
-  (TocenLiveConfig, SttpBackendStub[IO, Any]) =
+  private def environmentWithResponse[T](body: T,
+                                         statusCode: StatusCode = StatusCode.Ok): (TocenLiveConfig, SttpBackendStub[IO, Any]) =
     (TocenLiveConfig("test"), mkBackend()
       .whenRequestMatches(_ => true)
       .thenRespond[T](body, statusCode))
@@ -34,7 +34,7 @@ class OnTimeClientSpec extends AsyncSpec {
     }
   }
 
-  it should "fail when payload is br0ken" in {
+  it should "fail when payload is broken" in {
     OnTimeClient[IO]().buses(environmentWithResponse(readBody("buses-broken.json")))
       .assertThrows[Exception]
   }
@@ -44,4 +44,6 @@ class OnTimeClientSpec extends AsyncSpec {
       StatusCode.apply(403)))
       .assertThrows[Exception]
   }
+
+  it should "retry" in (pending)
 }
