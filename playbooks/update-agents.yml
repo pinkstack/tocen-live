@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  gather_facts: True
+  gather_subset: interfaces
+
+  tasks:
+    - name: "Pull latest tocen-live"
+      shell: |
+        docker pull {{ docker_image }}
+    - name: "Stop and remove tocen-live containers"
+      shell: |
+        (docker stop -f tocen-live || true) && (docker rm -f tocen-live || true)
+
+    - name: "Run container in detached mode"
+      shell: |
+          docker run -d \
+          --name=tocen-live \
+          -e TOCEN_API_KEY={{ tocen_api_key }} \
+          --restart=always \
+          {{ docker_image }}

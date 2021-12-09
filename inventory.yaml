@@ -1,0 +1,10 @@
+all:
+  hosts:
+    nuc:
+      ansible_host: nuc-home
+      become: yes
+    low:
+      ansible_host: low
+      become: yes
+  vars:
+    docker_image: ghcr.io/pinkstack/tocen-live

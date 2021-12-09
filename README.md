@@ -46,6 +46,14 @@ sbt docker:publish
 sbt docker:publishLocal # to publish to local (development) registry
 ```
 
+## Deployment
+
+Use [update-agents.yml](playbooks/update-agents.yml) Ansible Playbook for to update Docker images running on hosts.
+
+```bash
+ansible-playbook playbooks/update-agents.yml -e tocen_api_key=${TOCEN_API_KEY}
+```
+
 - [Oto Brglez](https://github.com/otobrglez)
 
 [cr]: https://github.com/pinkstack/tocen-live/pkgs/container/tocen-live
