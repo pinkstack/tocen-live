@@ -4,8 +4,6 @@ import Dependencies._
 import com.typesafe.sbt.packager.docker.Cmd
 
 import scala.sys.process._
-
-ThisBuild / version := "0.0.1"
 ThisBuild / scalaVersion := "2.13.7"
 ThisBuild / publishArtifact := false
 ThisBuild / organization := "com.pinkstack.tocenlive"

@@ -4,7 +4,9 @@ import cats.effect.{Resource, Sync}
 import pureconfig._
 import pureconfig.generic.auto._
 
-final case class TocenLiveConfig(tocenApiKey: String)
+import scala.concurrent.duration.FiniteDuration
+
+final case class TocenLiveConfig(tocenApiKey: String, refreshInterval: FiniteDuration)
 
 object Configuration {
   def load[F[_] : Sync](): F[TocenLiveConfig] =

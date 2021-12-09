@@ -17,6 +17,13 @@ Or as a daemon with `-d`
 docker run -d --name=tocen-live -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
 ```
 
+## Configuration
+
+The service can accept the following environment variables
+
+- `TOCEN_API_KEY` - API Key for the underlying LPP WebService
+- `REFRESH_INTERVAL` - Internal refresh interval used for refreshing internal state. Default value - `100 milliseconds`
+
 ## Development
 
 To run the test suite one shall use:
@@ -29,6 +36,7 @@ To run the service in development mode
 
 ```bash
 sbt "~run"
+sbt "~reStart" # with sbt-revolver for JVM based restarts
 ```
 
 To build and publish a new Docker image to [container registry][cr] use

@@ -2,18 +2,38 @@ package com.pinkstack.tocenlive
 
 import cats.effect.{Async, Ref, Sync}
 import cats.implicits._
+import com.pinkstack.tocenlive.Change.{Added, Removed, Updated}
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
 import sttp.client3.SttpBackend
 
+import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
-import scala.concurrent.duration.DurationInt
+
+final case class Event[T](kind: String,
+                          data: T,
+                          id: UUID = UUID.randomUUID(),
+                          created_at: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC))
+
+object Event {
+
+  import io.circe.Encoder
+  import io.circe.generic.auto._
+  import io.circe.syntax._
+
+  implicit val encodeChange: Encoder[Change] = Encoder.instance {
+    case added@Added(_) => added.asJson
+    case updated@Updated(_, _) => updated.asJson
+    case removed@Removed(_) => removed.asJson
+  }
+}
 
 final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
                                            (environment: (TocenLiveConfig, SttpBackend[F, Any]))
                                            (implicit F: Async[F]) {
 
-  import io.circe.generic.auto._, io.circe.syntax._
+  import io.circe.generic.auto._
+  import io.circe.syntax._
 
   implicit def log[G[_] : Sync]: SelfAwareStructuredLogger[F] =
     Slf4jLogger.getLoggerFromName[F]("ontime-watcher")
@@ -32,10 +52,10 @@ final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
             }
           _ <- Async[F].delay {
             out._2.foreach { change =>
-              println(change.asJson)
+              println(Event(change.getClass.getSimpleName, change).asJson.noSpaces)
             }
           }
-          _ <- busesRef.set(out._1) >> Async[F].sleep(1.second)
+          _ <- busesRef.set(out._1) >> Async[F].sleep(environment._1.refreshInterval)
         } yield ()
       } >> firstLoopRef.set(false)
     }.foreverM.void
