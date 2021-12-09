@@ -1,6 +1,6 @@
 # Točen Live
 
-Točen Live is Real-time WebSocket server for serving MOL LPP Bus information.
+Točen Live is Real-time WebSocket server for serving [MOL](https://www.ljubljana.si/) / [LPP](https://www.lpp.si) Bus information in [Ljubljana](https://en.wikipedia.org/wiki/Ljubljana).
 
 ## Usage
 
@@ -53,6 +53,8 @@ Use [update-agents.yml](playbooks/update-agents.yml) Ansible Playbook for to upd
 ```bash
 ansible-playbook playbooks/update-agents.yml -e tocen_api_key=${TOCEN_API_KEY}
 ```
+
+## Author
 
 - [Oto Brglez](https://github.com/otobrglez)
 
