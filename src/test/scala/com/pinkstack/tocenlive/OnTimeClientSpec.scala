@@ -44,6 +44,4 @@ class OnTimeClientSpec extends AsyncSpec {
       StatusCode.apply(403)))
       .assertThrows[Exception]
   }
-
-  it should "retry" in (pending)
 }

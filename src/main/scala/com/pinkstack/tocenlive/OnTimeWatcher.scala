@@ -12,8 +12,8 @@ import scala.concurrent.duration.DurationInt
 final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
                                            (environment: (TocenLiveConfig, SttpBackend[F, Any]))
                                            (implicit F: Async[F]) {
+
   import io.circe.generic.auto._, io.circe.syntax._
-  import ChangeDetector._
 
   implicit def log[G[_] : Sync]: SelfAwareStructuredLogger[F] =
     Slf4jLogger.getLoggerFromName[F]("ontime-watcher")
@@ -23,11 +23,13 @@ final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
       {
         for {
           v <- busNumberRef.getAndUpdate(_ + 10)
-          _ <- Logger[F].info(s"Loop ${v}")
-          out <- (busesRef.get, OnTimeClient[F]().buses(environment).map(_.map(b => (b.bus_id, b)).toMap), firstLoopRef.get).mapN {
-            case (old, current, false) => ChangeDetector.changes(old, current)
-            case (_, current, true) => (current, Seq.empty[Change])
-          }
+          out <- (
+            busesRef.get,
+            OnTimeClient[F]().buses(environment).map(_.map(b => (b.bus_id, b)).toMap), firstLoopRef.get)
+            .mapN {
+              case (old, current, false) => (current, ChangeDetector.changes(old, current))
+              case (_, current, true) => (current, Seq.empty[Change])
+            }
           _ <- Async[F].delay {
             out._2.foreach { change =>
               println(change.asJson)
