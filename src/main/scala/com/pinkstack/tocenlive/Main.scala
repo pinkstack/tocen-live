@@ -2,6 +2,7 @@ package com.pinkstack.tocenlive
 
 import cats.effect._
 import cats.implicits._
+import fs2.concurrent.Topic
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
 import sttp.client3.SttpBackend
@@ -18,13 +19,19 @@ object Main extends IOApp.Simple {
     (Configuration.mkResource[F](), mkAsyncBackend[F]()).tupled
 
   def run: IO[Unit] = {
-    implicit def log[F[_]: Sync]: SelfAwareStructuredLogger[F] =
+    implicit def logger[F[_]: Sync]: SelfAwareStructuredLogger[F] =
       Slf4jLogger.getLoggerFromName[F]("tocen-live")
 
     for {
-      ref <- Ref[IO].of(0)
-      _   <- mkResources[IO]().map(OnTimeWatcher[IO](ref)).use(_.watch())
-      _   <- Logger[IO].info("Done")
+      _ <- Logger[IO].info("Booting...")
+      changes <- Topic[IO, Change]
+      _ <- mkResources[IO]().use {
+        case (config, backend) =>
+          for {
+            _ <- OnTimeObserver[IO]((config, backend), changes).watch().start
+            _ <- WebServer[IO](changes).mkResource().use(_ => IO.never).foreverM.void
+          } yield ()
+      }
     } yield ()
   }
 }

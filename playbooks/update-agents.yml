@@ -16,6 +16,7 @@
       shell: |
           docker run -d \
           --name=tocen-live \
+          -p 8077:8077 \
           -e TOCEN_API_KEY={{ tocen_api_key }} \
           -e REFRESH_INTERVAL="5 seconds" \
           --restart=always \

@@ -8,13 +8,13 @@ This service comes pre-packaged as a public Docker image and can be simply ran w
 
 ```bash
 export TOCEN_API_KEY="<ask>"
-docker run -ti --rm -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
+docker run -ti --rm -p 8077:8077 -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
 ```
 
 Or as a daemon with `-d`
 
 ```bash
-docker run -d --name=tocen-live -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
+docker run -d --name=tocen-live -p 8077:8077 -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
 ```
 
 ## Configuration
@@ -42,8 +42,7 @@ sbt "~reStart" # with sbt-revolver for JVM based restarts
 ## WebSockets Testing (WIP)
 
 ```bash
-websocat ws://0.0.0.0:8077/changes
-websocat ws://0.0.0.0:8077/changes?query="WHERE bus_id = <UUID>"
+websocat -E ws://0.0.0.0:8077/ws/changes
 ```
 
 To build and publish a new Docker image to [container registry][cr] use

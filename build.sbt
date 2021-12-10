@@ -31,8 +31,8 @@ lazy val root = (project in file("."))
   .enablePlugins(JavaServerAppPackaging, DockerPlugin)
   .settings(
     name := "tocen-live",
-    reStart / mainClass := Some("com.pinkstack.tocenlive.ServerApp"),
-    assembly / mainClass := Some("com.pinkstack.tocenlive.ServerApp"),
+    reStart / mainClass := Some("com.pinkstack.tocenlive.Main"),
+    assembly / mainClass := Some("com.pinkstack.tocenlive.Main"),
     assembly / assemblyJarName := "tocen-live.jar",
     assembly / assemblyMergeStrategy := {
       case x if x.endsWith("io.netty.versions.properties") => MergeStrategy.first
