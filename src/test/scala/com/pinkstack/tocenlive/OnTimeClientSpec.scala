@@ -10,7 +10,7 @@ import scala.io.Source
 import scala.concurrent.duration.DurationInt
 
 class OnTimeClientSpec extends AsyncSpec {
-  implicit def log[F[_] : Sync] =
+  implicit def log[F[_]: Sync] =
     Slf4jLogger.getLogger
 
   private lazy val readBody: String => String =
@@ -19,30 +19,37 @@ class OnTimeClientSpec extends AsyncSpec {
   private def mkBackend(): SttpBackendStub[IO, Any] =
     AsyncHttpClientCatsBackend.stub[IO]
 
-  private def environmentWithResponse[T](body: T,
-                                         statusCode: StatusCode = StatusCode.Ok): (TocenLiveConfig, SttpBackendStub[IO, Any]) =
-    (TocenLiveConfig("test", 400.milliseconds), mkBackend()
-      .whenRequestMatches(_ => true)
-      .thenRespond[T](body, statusCode))
+  private def environmentWithResponse[T](
+      body: T,
+      statusCode: StatusCode = StatusCode.Ok
+  ): (TocenLiveConfig, SttpBackendStub[IO, Any]) =
+    (
+      TocenLiveConfig("test", 400.milliseconds),
+      mkBackend()
+        .whenRequestMatches(_ => true)
+        .thenRespond[T](body, statusCode)
+    )
 
   "OnTimeClient" should "work for valid response" in {
-    OnTimeClient[IO]().buses(environmentWithResponse(readBody("buses.json"))).asserting { busInfos =>
-      busInfos shouldBe a[List[_]]
-      busInfos should not be empty
-      busInfos.headOption should matchPattern {
-        case Some(BusInfo(_, "LJ LP-408", _, _, _, _, _, _, _, _)) =>
-      }
+    OnTimeClient[IO]().buses(environmentWithResponse(readBody("buses.json"))).asserting {
+      busInfos =>
+        busInfos shouldBe a[List[_]]
+        busInfos should not be empty
+        busInfos.headOption should matchPattern {
+          case Some(BusInfo(_, "LJ LP-408", _, _, _, _, _, _, _, _)) =>
+        }
     }
   }
 
   it should "fail when payload is broken" in {
-    OnTimeClient[IO]().buses(environmentWithResponse(readBody("buses-broken.json")))
+    OnTimeClient[IO]()
+      .buses(environmentWithResponse(readBody("buses-broken.json")))
       .assertThrows[Exception]
   }
 
   it should "fail when API key is invalid" in {
-    OnTimeClient[IO]().buses(environmentWithResponse(readBody("api-fail-403.json"),
-      StatusCode.apply(403)))
+    OnTimeClient[IO]()
+      .buses(environmentWithResponse(readBody("api-fail-403.json"), StatusCode.apply(403)))
       .assertThrows[Exception]
   }
 }

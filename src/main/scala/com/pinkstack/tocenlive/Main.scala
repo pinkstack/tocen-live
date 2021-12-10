@@ -8,22 +8,23 @@ import sttp.client3.SttpBackend
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 
 object Main extends IOApp.Simple {
-  def mkAsyncBackend[F[_] : Async : Logger](): Resource[F, SttpBackend[F, Any]] =
-    AsyncHttpClientCatsBackend.resource[F]()
+  def mkAsyncBackend[F[_]: Async: Logger](): Resource[F, SttpBackend[F, Any]] =
+    AsyncHttpClientCatsBackend
+      .resource[F]()
       .evalTap(_ => Logger[F].info("Booting Async HTTP backend."))
       .onFinalize(Logger[F].info("Async HTTP backend done."))
 
-  def mkResources[F[_] : Async : Logger](): Resource[F, (TocenLiveConfig, SttpBackend[F, Any])] =
+  def mkResources[F[_]: Async: Logger](): Resource[F, (TocenLiveConfig, SttpBackend[F, Any])] =
     (Configuration.mkResource[F](), mkAsyncBackend[F]()).tupled
 
   def run: IO[Unit] = {
-    implicit def log[F[_] : Sync]: SelfAwareStructuredLogger[F] =
+    implicit def log[F[_]: Sync]: SelfAwareStructuredLogger[F] =
       Slf4jLogger.getLoggerFromName[F]("tocen-live")
 
     for {
       ref <- Ref[IO].of(0)
-      _ <- mkResources[IO]().map(OnTimeWatcher[IO](ref)).use(_.watch())
-      _ <- Logger[IO].info("Done")
+      _   <- mkResources[IO]().map(OnTimeWatcher[IO](ref)).use(_.watch())
+      _   <- Logger[IO].info("Done")
     } yield ()
   }
 }

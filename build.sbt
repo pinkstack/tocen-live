@@ -13,19 +13,19 @@ ThisBuild / organization := "com.pinkstack.tocenlive"
 ThisBuild / scalacOptions ++= Seq(
   "-feature",
   "-deprecation",
-  "-encoding", "utf-8", // Specify character encoding used by source files.
+  "-encoding",
+  "utf-8", // Specify character encoding used by source files.
   "-unchecked",
   "-explaintypes", // Explain type errors in more detail.
   "-language:implicitConversions",
   "-language:existentials",
   "-language:dynamics",
-  "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
+  "-language:existentials",                    // Existential types (besides wildcard types) can be written and inferred
   "-Ycache-plugin-class-loader:last-modified", // Enables caching of classloaders for compiler plugins
-  "-Ycache-macro-class-loader:last-modified", // and macro definitions. This can lead to performance improvements.
+  "-Ycache-macro-class-loader:last-modified"   // and macro definitions. This can lead to performance improvements.
 )
 
 ThisBuild / resolvers ++= myResolvers
-
 
 lazy val root = (project in file("."))
   .enablePlugins(JavaServerAppPackaging, DockerPlugin)
@@ -41,15 +41,19 @@ lazy val root = (project in file("."))
         oldStrategy(x)
 
     },
-
     libraryDependencies ++= List(
-      cats, circe, fs2, sttp, http4s, configurationLibs, logging, testingLibs
-    ).foldLeft(Seq.empty[ModuleID])(_ ++ _),
+      cats,
+      circe,
+      fs2,
+      sttp,
+      http4s,
+      configurationLibs,
+      logging,
+      testingLibs
+    ).foldLeft(Seq.empty[ModuleID])(_ ++ _)
   )
   .settings(
     Universal / mappings += (Compile / packageBin).value -> "tocen-live.jar",
-
-
     dockerUsername := Some("pinkstack"),
     dockerUpdateLatest := true,
     dockerBaseImage := "azul/zulu-openjdk:17-jre",
@@ -57,7 +61,7 @@ lazy val root = (project in file("."))
     dockerExposedPorts := Seq(8077),
     dockerExposedUdpPorts := Seq.empty[Int],
     dockerCommands := dockerCommands.value.flatMap {
-      case add@Cmd("RUN", args@_*) if args.contains("id") =>
+      case add @ Cmd("RUN", args @ _*) if args.contains("id") =>
         List(
           Cmd("LABEL", "maintainer Oto Brglez <otobrglez@gmail.com>"),
           Cmd("LABEL", "org.opencontainers.image.url https://github.com/pinkstack/tocen-live"),
@@ -68,11 +72,11 @@ lazy val root = (project in file("."))
           add
         )
       case other => List(other)
-    },
+    }
   )
-
 
 lazy val deployWithAnsible = taskKey[Unit]("Execute the shell script")
 deployWithAnsible := {
-  """ansible-playbook playbooks/update-agents.yml -e tocen_api_key="%s" -vv""".format(sys.env("TOCEN_API_KEY")) !
+  """ansible-playbook playbooks/update-agents.yml -e tocen_api_key="%s" -vv"""
+    .format(sys.env("TOCEN_API_KEY")) !
 }

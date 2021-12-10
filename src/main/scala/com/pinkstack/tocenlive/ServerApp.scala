@@ -20,9 +20,11 @@ import scala.concurrent.duration.DurationInt
 
 object ServerApp extends IOApp.Simple {
 
-  val helloWorldService = HttpRoutes.of[IO] {
-    case GET -> Root => Ok("")
-  }.orNotFound
+  val helloWorldService = HttpRoutes
+    .of[IO] { case GET -> Root =>
+      Ok("")
+    }
+    .orNotFound
 
   def wsRoutes(wsb: WebSocketBuilder[IO]): HttpRoutes[IO] = HttpRoutes.of[IO] {
     case GET -> Root / "ws" / "echo" =>
@@ -41,7 +43,6 @@ object ServerApp extends IOApp.Simple {
       .withHttpWebSocketApp(wsRoutes(_).orNotFound)
       .resource
       .onFinalize(IO(println("Done with server")).void)
-
 
   def run: IO[Unit] =
     for {

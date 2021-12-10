@@ -8,19 +8,19 @@ import org.typelevel.log4cats.Logger
 import sttp.client3._
 import sttp.client3.circe.asJson
 
-final case class OnTimeClient[F[_] : Async : Logger]() {
+final case class OnTimeClient[F[_]: Async: Logger]() {
   type Environment = (TocenLiveConfig, SttpBackend[F, _])
   private val root = uri"https://api.ontime.si"
 
-  private val getBuses: Environment => F[Json] = {
-    case (config, backend) =>
-      basicRequest.get(root.withWholePath("/api/v1/lpp/buses/"))
-        .contentType("application/json")
-        .acceptEncoding("gzip, deflate")
-        .headers(Map("authorization" -> s"Api-Key ${config.tocenApiKey}"))
-        .response(asJson[Json].getRight)
-        .send(backend)
-        .map(_.body)
+  private val getBuses: Environment => F[Json] = { case (config, backend) =>
+    basicRequest
+      .get(root.withWholePath("/api/v1/lpp/buses/"))
+      .contentType("application/json")
+      .acceptEncoding("gzip, deflate")
+      .headers(Map("authorization" -> s"Api-Key ${config.tocenApiKey}"))
+      .response(asJson[Json].getRight)
+      .send(backend)
+      .map(_.body)
   }
 
   private val convert: F[Json] => F[List[BusInfo]] =

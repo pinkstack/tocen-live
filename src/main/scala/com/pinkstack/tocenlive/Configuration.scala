@@ -9,9 +9,12 @@ import scala.concurrent.duration.FiniteDuration
 final case class TocenLiveConfig(tocenApiKey: String, refreshInterval: FiniteDuration)
 
 object Configuration {
-  def load[F[_] : Sync](): F[TocenLiveConfig] =
-    Sync[F].pure(ConfigSource.default.at("tocen-live")
-      .loadOrThrow[TocenLiveConfig])
+  def load[F[_]: Sync](): F[TocenLiveConfig] =
+    Sync[F].pure(
+      ConfigSource.default
+        .at("tocen-live")
+        .loadOrThrow[TocenLiveConfig]
+    )
 
-  def mkResource[F[_] : Sync](): Resource[F, TocenLiveConfig] = Resource.liftK(load())
+  def mkResource[F[_]: Sync](): Resource[F, TocenLiveConfig] = Resource.liftK(load())
 }
