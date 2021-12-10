@@ -39,7 +39,7 @@ sbt "~run"
 sbt "~reStart" # with sbt-revolver for JVM based restarts
 ```
 
-## WebSockets Testing (WIP)
+## WebSockets via command-line
 
 ```bash
 websocat -E ws://0.0.0.0:8077/ws/changes
