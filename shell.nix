@@ -3,7 +3,8 @@ with import <nixpkgs> {};
 stdenv.mkDerivation {
     name = "tocen-live";
     buildInputs = [
-        ansible
+      ansible
+      websocat
     ];
     shellHook = ''
     

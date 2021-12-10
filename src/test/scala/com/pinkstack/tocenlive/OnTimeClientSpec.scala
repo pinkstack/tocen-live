@@ -7,6 +7,7 @@ import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
 
 import scala.io.Source
+import scala.concurrent.duration.DurationInt
 
 class OnTimeClientSpec extends AsyncSpec {
   implicit def log[F[_] : Sync] =
@@ -20,7 +21,7 @@ class OnTimeClientSpec extends AsyncSpec {
 
   private def environmentWithResponse[T](body: T,
                                          statusCode: StatusCode = StatusCode.Ok): (TocenLiveConfig, SttpBackendStub[IO, Any]) =
-    (TocenLiveConfig("test"), mkBackend()
+    (TocenLiveConfig("test", 400.milliseconds), mkBackend()
       .whenRequestMatches(_ => true)
       .thenRespond[T](body, statusCode))
 

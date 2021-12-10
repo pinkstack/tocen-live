@@ -10,7 +10,7 @@
         docker pull {{ docker_image }}
     - name: "Stop and remove tocen-live containers"
       shell: |
-        (docker stop -f tocen-live || true) && (docker rm -f tocen-live || true)
+        (docker stop -f tocen-live || true) && (docker rm tocen-live || true)
 
     - name: "Run container in detached mode"
       shell: |

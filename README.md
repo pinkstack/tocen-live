@@ -39,6 +39,13 @@ sbt "~run"
 sbt "~reStart" # with sbt-revolver for JVM based restarts
 ```
 
+## WebSockets Testing (WIP)
+
+```bash
+websocat ws://0.0.0.0:8077/changes
+websocat ws://0.0.0.0:8077/changes?query="WHERE bus_id = <UUID>"
+```
+
 To build and publish a new Docker image to [container registry][cr] use
 
 ```bash

@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>DEBUG</level>
-    </filter>
-    <encoder>
-      <!-- <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg MDC: {%mdc}%n</pattern> -->
-      <!-- <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg</pattern> -->
-      <!-- <pattern>%-5level [%thread] %d{HH:mm:ss.SSS} %logger{15} - %msg%n%rEx</pattern>-->
-      <pattern>%-5level %d{HH:mm:ss.SSS} %logger{15} - %msg%n%rEx</pattern>
-    </encoder>
-    <!-- <immediateFlush>true</immediateFlush> -->
-  </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <!-- <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg MDC: {%mdc}%n</pattern> -->
+            <!-- <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg</pattern> -->
+            <!-- <pattern>%-5level [%thread] %d{HH:mm:ss.SSS} %logger{15} - %msg%n%rEx</pattern>-->
+            <!-- <pattern>%-5level %d{HH:mm:ss.SSS} %logger{15} - %msg%n%rEx</pattern> -->
+            <pattern>[%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
+        </encoder>
 
-  <logger name="akka" level="${AKKA_LOG_LEVEL:-DEBUG}"/>
-  <logger name="akka.http" level="${AKKA_HTTP_LOG_LEVEL:-DEBUG}"/>
+        <withJansi>true</withJansi>
+        <!-- <immediateFlush>true</immediateFlush> -->
+    </appender>
 
-  <logger name="com.pinkstack.tocenlive" level="${TOCEN_LIVE:-DEBUG}"/>
+    <logger name="akka" level="${AKKA_LOG_LEVEL:-DEBUG}"/>
+    <logger name="akka.http" level="${AKKA_HTTP_LOG_LEVEL:-DEBUG}"/>
+
+    <logger name="com.pinkstack.tocenlive" level="${TOCEN_LIVE:-DEBUG}"/>
 
 
-  <root level="INFO">
-    <appender-ref ref="STDOUT"/>
-    <!-- <appender-ref ref="CLOUD"/> -->
-    <!-- <appender-ref ref="FILE"/> -->
-  </root>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <!-- <appender-ref ref="CLOUD"/> -->
+        <!-- <appender-ref ref="FILE"/> -->
+    </root>
 </configuration>

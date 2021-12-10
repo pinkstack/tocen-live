@@ -35,8 +35,7 @@ final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
   import io.circe.generic.auto._
   import io.circe.syntax._
 
-  implicit def log[G[_] : Sync]: SelfAwareStructuredLogger[F] =
-    Slf4jLogger.getLoggerFromName[F]("ontime-watcher")
+  implicit def log[G[_] : Sync]: SelfAwareStructuredLogger[F] = Slf4jLogger.getLogger[F]
 
   private val setup: (Ref[F, Boolean], Ref[F, Map[UUID, BusInfo]]) => F[Unit] = {
     case (firstLoopRef: Ref[F, Boolean], busesRef: Ref[F, Map[UUID, BusInfo]]) => {
@@ -50,11 +49,13 @@ final case class OnTimeWatcher[F[_] : Sync](busNumberRef: Ref[F, Int])
               case (old, current, false) => (current, ChangeDetector.changes(old, current))
               case (_, current, true) => (current, Seq.empty[Change])
             }
+          _ <- log.info(s"Changes collected: %d".formatted(out._2.size))
+          /*
           _ <- Async[F].delay {
             out._2.foreach { change =>
               println(Event(change.getClass.getSimpleName, change).asJson.noSpaces)
             }
-          }
+          } */
           _ <- busesRef.set(out._1) >> Async[F].sleep(environment._1.refreshInterval)
         } yield ()
       } >> firstLoopRef.set(false)
