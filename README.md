@@ -45,6 +45,8 @@ sbt "~reStart" # with sbt-revolver for JVM based restarts
 websocat -E ws://0.0.0.0:8077/ws/changes
 ```
 
+## Building Docker Image
+
 To build and publish a new Docker image to [container registry][cr] use
 
 ```bash
@@ -58,6 +60,12 @@ Use [update-agents.yml](playbooks/update-agents.yml) Ansible Playbook for to upd
 
 ```bash
 ansible-playbook playbooks/update-agents.yml -e tocen_api_key=${TOCEN_API_KEY}
+```
+
+... or run SBT task that will package and invoke Ansible playbook.
+
+```bash
+sbt deployCurrent
 ```
 
 ## Author
