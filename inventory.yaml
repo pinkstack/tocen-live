@@ -1,8 +1,8 @@
 all:
   hosts:
-    nuc:
-      ansible_host: nuc-home
-      become: yes
+    #nuc:
+    #  ansible_host: nuc-home
+    #  become: yes
     low:
       ansible_host: low
       become: yes
