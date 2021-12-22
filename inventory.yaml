@@ -7,4 +7,4 @@ all:
       ansible_host: low
       become: yes
   vars:
-    docker_image: ghcr.io/pinkstack/tocen-live
+    docker_image: "ghcr.io/pinkstack/tocen-live"

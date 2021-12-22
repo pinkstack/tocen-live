@@ -20,9 +20,9 @@ ThisBuild / scalacOptions ++= Seq(
   "-language:implicitConversions",
   "-language:existentials",
   "-language:dynamics",
-  "-language:existentials",                    // Existential types (besides wildcard types) can be written and inferred
+  "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
   "-Ycache-plugin-class-loader:last-modified", // Enables caching of classloaders for compiler plugins
-  "-Ycache-macro-class-loader:last-modified"   // and macro definitions. This can lead to performance improvements.
+  "-Ycache-macro-class-loader:last-modified" // and macro definitions. This can lead to performance improvements.
 )
 
 ThisBuild / resolvers ++= myResolvers
@@ -33,13 +33,14 @@ lazy val root = (project in file("."))
     name := "tocen-live",
     reStart / mainClass := Some("com.pinkstack.tocenlive.Main"),
     assembly / mainClass := Some("com.pinkstack.tocenlive.Main"),
+    Compile / mainClass := Some("com.pinkstack.tocenlive.Main"),
+    Compile / discoveredMainClasses := Seq(),
     assembly / assemblyJarName := "tocen-live.jar",
     assembly / assemblyMergeStrategy := {
       case x if x.endsWith("io.netty.versions.properties") => MergeStrategy.first
       case x =>
         val oldStrategy = (assembly / assemblyMergeStrategy).value
         oldStrategy(x)
-
     },
     libraryDependencies ++= List(
       cats,

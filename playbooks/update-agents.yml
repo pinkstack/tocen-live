@@ -10,7 +10,7 @@
         docker pull {{ docker_image }}
     - name: "Stop and remove tocen-live containers"
       shell: |
-        (docker stop -f tocen-live || true) && (docker rm tocen-live || true)
+        (docker stop tocen-live || true) && (docker rm tocen-live || true)
 
     - name: "Run container in detached mode"
       shell: |
@@ -20,4 +20,6 @@
           -e TOCEN_API_KEY={{ tocen_api_key }} \
           -e REFRESH_INTERVAL="5 seconds" \
           --restart=always \
+          --log-opt max-size=10m \
+          --log-opt max-file=5 \
           {{ docker_image }}
