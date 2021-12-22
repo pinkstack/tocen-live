@@ -1,6 +1,9 @@
 package com.pinkstack
 
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+
 import java.util.UUID
+import scala.reflect.ClassTag
 
 package object tocenlive {
 
@@ -31,10 +34,17 @@ package object tocenlive {
     import io.circe.generic.auto._
     import io.circe.syntax._
 
-    implicit val encodeChange: Encoder[Change] = Encoder.instance {
-      case added@Added(_) => added.asJson
-      case updated@Updated(_, _) => updated.asJson
-      case removed@Removed(_) => removed.asJson
+    object implicits {
+      implicit def changeToEvent(change: Change): Event[Change] =
+        Event(change.getClass.getSimpleName, change)
+
+      implicit def encodeEvent[T: Encoder]: Encoder[Event[T]] = deriveEncoder
+
+      implicit val encodeChange: Encoder[Change] = Encoder.instance {
+        case added @ Added(_)        => added.asJson
+        case updated @ Updated(_, _) => updated.asJson
+        case removed @ Removed(_)    => removed.asJson
+      }
     }
   }
 

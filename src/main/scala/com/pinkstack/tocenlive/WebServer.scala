@@ -4,6 +4,7 @@ import cats.effect.{Async, Resource, Temporal}
 import cats.implicits._
 import fs2.concurrent.Topic
 import fs2.{Pipe, Stream}
+import io.circe.{Encoder, Json}
 import org.http4s.HttpRoutes
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.server.websocket.WebSocketBuilder
@@ -15,9 +16,10 @@ import scala.concurrent.duration.DurationInt
 
 final case class WebServer[F[_]: Async: Logger](changesTopic: Topic[F, Change])(
     implicit F: Temporal[F]) {
-  import io.circe.generic.auto._
-  import io.circe.syntax._
+  import WebServer._
+  import io.circe.generic.auto._, io.circe.syntax._
   import org.http4s.dsl.io._
+  import Event.implicits._
 
   def wsRoutes(wsb: WebSocketBuilder[F]): HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / "ws" / "changes" =>
@@ -25,9 +27,7 @@ final case class WebServer[F[_]: Async: Logger](changesTopic: Topic[F, Change])(
         changesTopic
           .subscribe(100)
           .delayBy(50.milliseconds)
-          .map { change =>
-            Text(Event(change.getClass.getSimpleName, change).asJson.noSpaces)
-          }
+          .map(changeToTextFrame)
 
       val fromClient: Pipe[F, WebSocketFrame, Unit] = _.void
       wsb.build(toClient, fromClient)
@@ -41,4 +41,13 @@ final case class WebServer[F[_]: Async: Logger](changesTopic: Topic[F, Change])(
       .resource
       .evalTap(_ => Logger[F].info("Booting Blaze Server"))
       .onFinalize(Logger[F].info("Booting Blaze Server").void)
+}
+object WebServer {
+  import io.circe.generic.auto._, io.circe.syntax._
+  import Event.implicits._
+
+  def eventToJson[T](event: Event[T])(implicit encoder: Encoder[Event[T]]): Json = event.asJson
+
+  val changeToTextFrame: Change => Text = change =>
+    Text(eventToJson(changeToEvent(change)).noSpaces)
 }

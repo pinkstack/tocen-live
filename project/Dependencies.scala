@@ -7,9 +7,9 @@ object Dependencies {
   object Versions {
     val ScalaTest: Version          = "3.2.10"
     val Cats: Version               = "2.7.0"
-    val CatsEffect: Version         = "3.3.0"
+    val CatsEffect: Version         = "3.3.1"
     val Circe: Version              = "0.14.0"
-    val LogbackClassic: Version     = "1.2.7"
+    val LogbackClassic: Version     = "1.2.9"
     val LogbackClassicJSON: Version = "0.1.5"
     val ScalaLogging: Version       = "3.9.4"
     val fs2: Version                = "3.2.3"
@@ -48,7 +48,6 @@ object Dependencies {
   val circe: Seq[ModuleID] = Seq(
     "io.circe" %% "circe-core",
     "io.circe" %% "circe-generic",
-    // "io.circe" %% "circe-generic-extras",
     "io.circe" %% "circe-parser",
     "io.circe" %% "circe-fs2"
   ).map(_ % Versions.Circe)

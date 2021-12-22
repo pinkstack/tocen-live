@@ -1,6 +1,5 @@
 package com.pinkstack.tocenlive
 
-import com.pinkstack.tocenlive.ChangeDetector._
 import com.pinkstack.tocenlive.Change._
 import java.util.UUID
 
