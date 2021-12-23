@@ -4,7 +4,8 @@ Točen Live is Real-time WebSocket server for serving [MOL](https://www.ljubljan
 
 ## Usage
 
-This service comes pre-packaged as a public Docker image and can be simply ran with the following `run` command.
+### Server
+This service comes pre-packaged as a public [Docker Image](https://github.com/pinkstack/tocen-live/pkgs/container/tocen-live) and can be simply ran with the following `docker run` command.
 
 ```bash
 export TOCEN_API_KEY="<ask>"
@@ -15,6 +16,14 @@ Or as a daemon with `-d`
 
 ```bash
 docker run -d --name=tocen-live -p 8077:8077 -e TOCEN_API_KEY=${TOCEN_API_KEY} ghcr.io/pinkstack/tocen-live
+```
+
+### Connecting to server
+
+If you wanna connect to server via WebSocket connection please use [websocat] and perhaps pass the output to [jq].
+
+```bash
+websocat -E ws://tocen-live.pinkstack.com:8077/ws/changes | jq .
 ```
 
 ## Configuration
@@ -37,12 +46,6 @@ To run the service in development mode
 ```bash
 sbt "~run"
 sbt "~reStart" # with sbt-revolver for JVM based restarts
-```
-
-## WebSockets via command-line
-
-```bash
-websocat -E ws://0.0.0.0:8077/ws/changes
 ```
 
 ## Building Docker Image
@@ -73,3 +76,5 @@ sbt deployCurrent
 - [Oto Brglez](https://github.com/otobrglez)
 
 [cr]: https://github.com/pinkstack/tocen-live/pkgs/container/tocen-live
+[websocat]: https://github.com/vi/websocat
+[jq]: https://stedolan.github.io/jq/
